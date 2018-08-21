@@ -33,7 +33,6 @@
 					return_value = '';
 				}
 			});
-			
 			return return_value;
 		}
 				
@@ -47,11 +46,12 @@
 			container.attr('data-sh-attr', window.encodeURIComponent(data));
 			container.attr('data-mce-resize', false);
 			container.attr('data-mce-placeholder', 1);
-			container.attr('contenteditable', false);
+			container.attr('contenteditable', true); /* set to true, otherwise content is not selected in edit mode and slideshow is duplicated instead of being replaced */
 			
 			if ( ids_url.length > 0 ) {
 				ids_url.map( function(attachment) {						
 						var attachment_img  = $('<img>', {class: 'img-thumbnail'});
+						attachment_img.attr('contenteditable', false);
 						attachment_img.attr('src', attachment.url);
 						attachment_img.attr('draggable', false);
 						
@@ -77,29 +77,18 @@
 		}
 		
 		function replaceShortcodes( content ) {
-			console.log('replaceShortcodes ');
-			return content.replace( /\[fef_slideshow([^\]]*)\]/g, function(all, attr) {
-				console.log('replaceShortcodes html');
+			return content.replace( /\[fef_slideshow([^\]]*)\]/g, function(match, attr) {
+				console.log('replaceShortcodes html ' + attr);
 				return html(attr);
 			});
 		}
-		
-		// /(?:<p(?: [^>]+)?>)*(<div.*?fef-mce-slideshow(?:[^>]+)?><ul(?:[^>]+)?><li(?:[^>]+)?>.*?<\/li>+.*?<\/ul><\/div>)(?:<\/p>)*/g
-		// /(?:<p(?: [^>]+)?>)*(<div.*?fef-mce-slideshow(?:[^>]+)?><ul(?:[^>]+)?>(<li(?:[^>]+)?>.*?<\/li>)+.*?<\/ul><\/div>)(?:<\/p>)*/g
-		
+				
 		function restoreShortcodes( content ) {
-			console.log('restoreShortcodes ');
-			return content.replace(/(?:<p(?: [^>]+)?>)*(<div.*?fef-mce-slideshow(?:[^>]+)?><ul(?:[^>]+)?><li(?:[^>]+)?>.*?<\/li>+.*?<\/ul><\/div>)(?:<\/p>)*/g, function( match, image ) {
-				
-				console.log('restoreShortcodes ' + image);
-				
+			return content.replace(/(?:(<div.*?fef-mce-slideshow(?:[^>]+)?>)<ul(?:[^>]+)?>).*?(?:<\/ul><\/div>)/g, function( match, image ) {
 				var data = getShAttr( image, 'data-sh-attr' );
-
 				if ( data ) {
-					console.log('restoreShortcodes return shortcode');
-					return '<p>[' + sh_tag + data + ']</p>';
+					return '[' + sh_tag + data + ']';
 				}
-				console.log('restoreShortcodes match' + match);
 				return match;
 			});
 		}
