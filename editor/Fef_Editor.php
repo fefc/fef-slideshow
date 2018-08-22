@@ -128,16 +128,18 @@ class Fef_Editor {
 	 * Used to enqueue custom styles
 	 * @return void
 	 */
-	function admin_enqueue_scripts(){	
-		// load editor style and script
-		wp_enqueue_style('fef_editor_style', plugins_url( 'css/popup-style.css', __FILE__) );	
-		wp_enqueue_script('fef_editor_script', plugins_url( 'js/popup.js', __FILE__ ), array('jquery'), '1.0', true );
+	function admin_enqueue_scripts( $hook_suffix ){	
+		if( in_array($hook_suffix, array('post.php', 'post-new.php') ) ){
+			// load editor style and script
+			wp_enqueue_style('fef_editor_style', plugins_url( 'css/popup-style.css', __FILE__) );	
+			wp_enqueue_script('fef_editor_script', plugins_url( 'js/popup.js', __FILE__ ), array('jquery'), '1.0', true );
 
-		// For preview we also need slideshow side
-		wp_enqueue_style('fef_slideshow_style', plugin_dir_url( __DIR__ ) . 'slideshow/css/style.css');
-		wp_enqueue_script('fef_slideshow_script', plugin_dir_url( __DIR__ ) . 'slideshow/js/slideshow.js', array('jquery'), '1.0', true);
-				
-		// AJAX
-		wp_localize_script( 'fef_editor_script', 'ajax_fef_popup_object', array( 'ajax_url' => admin_url( 'admin-ajax.php' ), 'ajax_nonce' => wp_create_nonce( '_nonce_fef_popup' ) ) );
+			// For preview we also need slideshow side
+			wp_enqueue_style('fef_slideshow_style', plugin_dir_url( __DIR__ ) . 'slideshow/css/style.css');
+			wp_enqueue_script('fef_slideshow_script', plugin_dir_url( __DIR__ ) . 'slideshow/js/slideshow.js', array('jquery'), '1.0', true);
+					
+			// AJAX
+			wp_localize_script( 'fef_editor_script', 'ajax_fef_popup_object', array( 'ajax_url' => admin_url( 'admin-ajax.php' ), 'ajax_nonce' => wp_create_nonce( '_nonce_fef_popup' ) ) );
+		}
 	}
 }
